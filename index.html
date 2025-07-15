@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malla Curricular - Profesorado de Literatura</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto Serif', serif;
+      background: #f9f9f9;
+      padding: 2rem;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .semestre {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      border-radius: 10px;
+    }
+
+    .materia {
+      display: inline-block;
+      margin: 6px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+      border-left: 4px solid #888;
+      position: relative;
+      width: 280px;
+      vertical-align: top;
+    }
+
+    .materia.aprobada {
+      background-color: #d1e7dd;
+      border-color: #4caf50;
+    }
+
+    .materia select {
+      margin-top: 6px;
+      width: 100%;
+    }
+
+    .barra-container {
+      background: #ddd;
+      height: 30px;
+      border-radius: 20px;
+      margin: 30px auto;
+      width: 80%;
+      overflow: hidden;
+    }
+
+    .barra-progreso {
+      background: #4caf50;
+      height: 100%;
+      width: 0%;
+      text-align: center;
+      color: white;
+      line-height: 30px;
+      font-weight: bold;
+      transition: width 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <h1>Malla Curricular - Profesorado de Literatura</h1>
+
+  <div class="barra-container">
+    <div class="barra-progreso" id="progreso">0% - 0 créditos</div>
+  </div>
+
+  <div id="malla"></div>
+
+  <script>
+    const totalCreditos = 370;
+
+    const semestres = [
+      {
+        titulo: "Primer semestre",
+        color: "#e3f2fd",
+        materias: [
+          ["La educación y sus transformaciones en la historia", 6],
+          ["Pedagogía", 5],
+          ["Educación, sociedad y cultura", 4.5],
+          ["Corrientes literarias", 7],
+          ["Gramática española", 8.5],
+          ["Literatura grecolatina", 8]
+        ]
+      },
+      {
+        titulo: "Segundo semestre",
+        color: "#f1f8e9",
+        materias: [
+          ["Pedagogía", 5],
+          ["Educación, sociedad y cultura", 4.5],
+          ["Desarrollo humano integral", 6],
+          ["Introducción al campo profesional", 6],
+          ["Lingüística", 7],
+          ["Literatura medieval y renacentista", 8],
+          ["Gramática española", 8.5]
+        ]
+      },
+      {
+        titulo: "Tercer semestre",
+        color: "#fff8e1",
+        materias: [
+          ["Sistema educativo nacional: políticas educativas", 6],
+          ["Aprendizaje, neurociencias y procesos socioafectivos", 6],
+          ["Literatura española I: Medieval", 8],
+          ["Teoría literaria", 8],
+          ["Tecnologías multimediales", 7],
+          ["Didáctica: Práctica docente I", 10.5]
+        ]
+      },
+      {
+        titulo: "Cuarto semestre",
+        color: "#ede7f6",
+        materias: [
+          ["Sistema educativo nacional: marco normativo y gestión institucional", 6],
+          ["Literatura española II: del Siglo de Oro a la Ilustración", 8],
+          ["Literatura universal I: Barroco e Ilustración", 9],
+          ["Pensamiento computacional", 7],
+          ["Didáctica: Práctica docente I", 10.5]
+        ]
+      },
+      {
+        titulo: "Quinto semestre",
+        color: "#e0f2f1",
+        materias: [
+          ["Problemas epistemológicos y pensamiento científico", 6],
+          ["Inves: Educativa aplicada: diseño de proyectos", 4],
+          ["Didáctica: Práctica docente II", 10.5],
+          ["Literatura universal II: del siglo XIX a la actualidad", 9],
+          ["Literatura iberoamericana I", 8],
+          ["Literatura y lenguaje digital", 7]
+        ]
+      },
+      {
+        titulo: "Sexto semestre",
+        color: "#fff3e0",
+        materias: [
+          ["Didáctica: Práctica docente II", 10.5],
+          ["Filosofía de la educación", 6],
+          ["Escritura y texto literario en la educación media", 6],
+          ["Literatura española II: Romanticismo a la actualidad", 8],
+          ["Literatura uruguaya I", 8],
+          ["Narrativa transmedia", 7]
+        ]
+      },
+      {
+        titulo: "Séptimo semestre",
+        color: "#fce4ec",
+        materias: [
+          ["Innovación en educación literaria", 6],
+          ["Investigación Educativa Aplicada: desarrollo y evaluación de proyectos", 6],
+          ["Metodología de la investigación literaria", 9],
+          ["Literatura uruguaya II", 8],
+          ["Lengua extranjera I", 7],
+          ["Didáctica: Práctica docente III", 12.5]
+        ]
+      },
+      {
+        titulo: "Octavo semestre",
+        color: "#f3e5f5",
+        materias: [
+          ["Investigación Educativa Aplicada: desarrollo y evaluación de proyectos", 6],
+          ["Didáctica: Práctica docente III", 12.5],
+          ["Estética literaria", 8],
+          ["Literatura iberoamericana II", 8],
+          ["Lengua extranjera II", 7]
+        ]
+      }
+    ];
+
+    const malla = document.getElementById("malla");
+    const progresoGuardado = JSON.parse(localStorage.getItem("progresoLiteratura") || "{}");
+
+    semestres.forEach((sem, i) => {
+      const div = document.createElement("div");
+      div.className = "semestre";
+      div.style.backgroundColor = sem.color;
+      div.innerHTML = `<h2>${sem.titulo}</h2>`;
+
+      sem.materias.forEach(([nombre, creditos], j) => {
+        const mat = document.createElement("div");
+        mat.className = "materia";
+        mat.dataset.creditos = creditos;
+        mat.dataset.id = `${i}-${j}`;
+        mat.innerHTML = `<strong>${nombre}</strong><br>(${creditos} cr.)`;
+
+        const select = document.createElement("select");
+        ["No aprobado", "Recursando", "Aprobado"].forEach(estado => {
+          const option = document.createElement("option");
+          option.value = estado;
+          option.textContent = estado;
+          select.appendChild(option);
+        });
+
+        const id = `${i}-${j}`;
+        if (progresoGuardado[id]) {
+          select.value = progresoGuardado[id];
+          if (select.value === "Aprobado") {
+            mat.classList.add("aprobada");
+          }
+        }
+
+        select.onchange = () => {
+          progresoGuardado[id] = select.value;
+          localStorage.setItem("progresoLiteratura", JSON.stringify(progresoGuardado));
+          if (select.value === "Aprobado") {
+            mat.classList.add("aprobada");
+          } else {
+            mat.classList.remove("aprobada");
+          }
+          actualizarBarra();
+        };
+
+        mat.appendChild(select);
+        div.appendChild(mat);
+      });
+
+      malla.appendChild(div);
+    });
+
+    function actualizarBarra() {
+      let total = 0;
+      document.querySelectorAll(".materia.aprobada").forEach(el => {
+        total += parseFloat(el.dataset.creditos);
+      });
+
+      const porcentaje = Math.min((total / totalCreditos) * 100, 100);
+      const barra = document.getElementById("progreso");
+      barra.style.width = porcentaje + "%";
+      barra.textContent = `${porcentaje.toFixed(1)}% - ${total.toFixed(1)} créditos`;
+    }
+
+    actualizarBarra();
+  </script>
+</body>
+</html>
